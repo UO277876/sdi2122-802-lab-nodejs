@@ -2,6 +2,7 @@
   "name": "tienda_musica",
   "description": "1.0.0",
   "dependencies": {
+    "body-parser": "^1.19.2",
     "express": "^4.17.1"
   }
 }
