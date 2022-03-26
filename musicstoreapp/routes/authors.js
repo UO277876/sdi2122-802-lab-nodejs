@@ -21,11 +21,23 @@ module.exports = function (app) {
     });
 
     app.get('/authors/add',function (req,res) {
-        res.render("authors/add.twig");
+        var roles = [
+            {"name": "Cantante"},
+            {"name": "Batería"},
+            {"name": "Guitarrista"},
+            {"name": "Bajista"},
+            {"name": "Teclista"}
+        ]
+
+        let response = {
+            roles:roles
+        };
+        res.render("authors/add.twig", response);
     });
 
     app.post('/authors/add',function (req,res) {
         let response = "";
+
         if(req.query.name == ""){
             response += "Nombre no enviado en la petición" + "<br>";
         } else{
