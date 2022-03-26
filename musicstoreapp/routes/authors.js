@@ -20,6 +20,28 @@ module.exports = function (app) {
         res.render("authors/authors.twig", response);
     });
 
+    app.get("/authors/filter/:rol", function (req, res) {
+        let rol = req.params.rol;
+        let authors = [{
+            "name": "Dan Reynolds",
+            "group": "Imagine Dragons",
+            "rol": "Cantante"
+        }, {
+            "name": "Patrick Stump",
+            "group": "Fall Out Boy",
+            "rol": "Guitarrista"
+        }, {
+            "name": "Clinton Cave",
+            "group": "Chase Atlantic",
+            "rol": "Cantante"
+        }];
+
+        let response = {
+            authors: authors.filter((author=>author.rol.includes(rol)))
+        };
+        res.render("authors/authors.twig", response);
+    });
+
     app.get('/authors/add',function (req,res) {
         var roles = [
             {"name": "Cantante"},
