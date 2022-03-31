@@ -25,6 +25,12 @@ module.exports = function (app, usersRepository) {
     res.render("login.twig");
   });
 
+  app.get('/logout', function (req, res) {
+    req.session.user = null;
+    res.send("El usuario se ha desconectado correctamente");
+  });
+
+
   app.post('/users/login', function (req, res) {
     let securePassword = app.get("crypto").createHmac('sha256',app.get('clave'))
         .update(req.body.password).digest('hex');
@@ -45,11 +51,6 @@ module.exports = function (app, usersRepository) {
       req.session.user = null;
       res.send("Se ha producido un error al buscar el usuario: " + error)
     })
-  });
-
-  app.get('/users/logout', function (req, res) {
-    req.session.user = null;
-    res.send("El usuario se ha desconectado correctamente");
   });
 
 }
