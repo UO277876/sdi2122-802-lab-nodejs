@@ -40,6 +40,10 @@ app.use("/publications",userSessionRouter);
 app.use("/audios/",userAudiosRouter);
 app.use("/shop/",userSessionRouter)
 
+const commentsRepository = require("./repositories/commentsRepository.js");
+commentsRepository.init(app, MongoClient);
+require("./routes/comments.js")(app, commentsRepository);
+
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 require("./routes/users.js")(app, usersRepository);
@@ -49,7 +53,7 @@ require("./routes/authors.js")(app);
 
 let songsRepository = require("./repositories/songsRepository.js");
 songsRepository.init(app, MongoClient);
-require("./routes/songs.js")(app, songsRepository);
+require("./routes/songs.js")(app, songsRepository, commentsRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
