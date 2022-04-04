@@ -28,5 +28,17 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    deleteComments: async function (comment) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("musicStore");
+            const collectionName = 'comments';
+            const commentsCollection = database.collection(collectionName);
+            const result = await commentsCollection.deleteOne(comment);
+            return result.id;
+        } catch (error) {
+            throw (error);
+        }
     }
 };
