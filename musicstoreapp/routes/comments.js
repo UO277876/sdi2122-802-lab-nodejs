@@ -21,16 +21,20 @@ module.exports = function (app, commentsRepository) {
     app.get("/comments/delete/:id", function (req, res) {
         let filter = {_id: ObjectId(req.params.id)};
         let options = {};
-        commentsRepository.deleteComments(filter, options).then(result => {
-            if(result[0].author != req.session.user){
-                res.send("Usuario incorrecto para este comentario");
-            } else if(result == null || result.deletedCount == 0){
-                res.send("Hubo algún error al borrar");
-            } else {
-                res.send("Borrado correctamente");
+        commentsRepository.getComments(filter, {}).then(comment => {
+            if(comment[0].author != req.session.user) {
+                res.send("Autor del comentario incorrecto");
             }
-        }).catch(error => {
-            res.send("Hubo algún error al borrar ") + error;
+
+            commentsRepository.deleteComments(filter, options).then(result => {
+                if(result == null || result.deletedCount == 0){
+                    res.send("Hubo algún error al borrar");
+                } else {
+                    res.send("Borrado correctamente");
+                }
+            }).catch(error => {
+                res.send("Hubo algún error al borrar ") + error;
+            });
         });
     });
 
