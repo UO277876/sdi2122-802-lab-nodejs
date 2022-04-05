@@ -29,14 +29,14 @@ module.exports = {
             throw (error);
         }
     },
-    deleteComments: async function (comment) {
+    deleteComments: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("musicStore");
             const collectionName = 'comments';
             const commentsCollection = database.collection(collectionName);
-            const result = await commentsCollection.deleteOne(comment);
-            return result.id;
+            const result = await commentsCollection.deleteOne(filter, options);
+            return result;
         } catch (error) {
             throw (error);
         }
