@@ -6,7 +6,21 @@
 
 var app = require('../app');
 var debug = require('debug')('musicstoreapp:server');
-var http = require('http');
+//var http = require('http');
+
+let fs = require('fs');
+let https = require('https');
+
+let privateKey = fs.readFileSync('certificates/alice.key', 'utf8');
+let certificate = fs.readFileSync('certificates/alice.crt', 'utf8');
+let credentials = {key: privateKey, cert: certificate};
+let server = https.createServer(app);
+let httpsServer = https.createServer(credentials, app);
+httpsServer.listen(4000);
+
+server.listen(app.get('port'), function() {
+  console.log("Servidor activo");
+})
 
 /**
  * Get port from environment and store in Express.
@@ -19,8 +33,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-server.listen(app.get('port'));
+//var server = http.createServer(app);
+//server.listen(app.get('port'));
 
 /**
  * Listen on provided port, on all network interfaces.
