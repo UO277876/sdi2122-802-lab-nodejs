@@ -36,7 +36,11 @@ module.exports = function (app, songsRepository, commentsRepository) {
             let filter2 = {song_id : ObjectId(req.params.id)};
             let options = {};
             commentsRepository.getComments(filter2, options).then(comment => {
-                res.render("songs/song.twig", {song: song, comments: comment});
+                let filter3 = {songId: ObjectId(req.params.id), user: req.session.user};
+                let options = {};
+                songsRepository.getPurchases(filter3,options).then(song2 => {
+                    res.render("songs/song.twig", {song: song, comments: comment, song2: song2.length, author: req.session.user});
+                })
             }).catch(error => {
                 res.send("Se ha producido un error con los comentarios " + error)
             });
@@ -52,11 +56,27 @@ module.exports = function (app, songsRepository, commentsRepository) {
             user: req.session.user,
             songId: songId
         }
-        songsRepository.buySong(shop, function (shopId) {
-            if (shopId == null) {
-                res.send("Error al realizar la compra");
+        let filter = {_id: ObjectId(req.params.id)}
+        let options = {}
+        songsRepository.findSong(filter, options).then(song => {
+            if(song.author == req.session.user){
+                res.send("Error con la compra")
             } else {
-                res.redirect("/purchases");
+                let filter2 = {songId: ObjectId(req.params.id), user: req.session.user}
+                let options = {}
+                songsRepository.getPurchases(filter2, options).then(song2 => {
+                    if(song2.length != 0){
+                        res.send("Error con la compra")
+                    } else {
+                        songsRepository.buySong(shop, function (shopId) {
+                            if (shopId == null) {
+                                res.send("Error al realizar la compra");
+                            } else {
+                                res.redirect("/purchases");
+                            }
+                        })
+                    }
+                })
             }
         })
     });
