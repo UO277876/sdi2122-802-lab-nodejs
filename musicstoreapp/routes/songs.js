@@ -39,7 +39,23 @@ module.exports = function (app, songsRepository, commentsRepository) {
                 let filter3 = {songId: ObjectId(req.params.id), user: req.session.user};
                 let options = {};
                 songsRepository.getPurchases(filter3,options).then(song2 => {
-                    res.render("songs/song.twig", {song: song, comments: comment, song2: song2.length, author: req.session.user});
+                    let settings = {
+                        url: "https://www.freeforexapi.com/api/live?pairs=EURUSD",
+                        method: "get",
+                        headers: {
+                            "token": "ejemplo",
+                        }
+                    }
+                    let rest = app.get("rest");
+                    rest(settings, function (error, response, body) {
+                        console.log("cod: " + response.statusCode + " Cuerpo :" + body);
+                        let responseObject = JSON.parse(body);
+                        let rateUSD = responseObject.rates.EURUSD.rate;
+                        // nuevo campo "usd" redondeado a dos decimales
+                        let songValue= rateUSD * song.price;
+                        song.usd = Math.round(songValue * 100) / 100;
+                        res.render("songs/song.twig", {song: song, comments: comment, song2: song2.length, author: req.session.user});
+                    })
                 })
             }).catch(error => {
                 res.send("Se ha producido un error con los comentarios " + error)
